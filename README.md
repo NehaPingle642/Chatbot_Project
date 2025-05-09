@@ -1,8 +1,8 @@
-# Chocolate Store Chatbot
+# Chocolate Store Chatbot 🍫
 
-A Python-based chatbot that helps customers with chocolate store queries using both rule-based and machine learning approaches.
+An intelligent chatbot for chocolate store customer service using rule-based and ML approaches.
 
-## Features
+## ✨ Features
 
 - Rule-based responses for common queries
 - ML-based response prediction
@@ -10,12 +10,12 @@ A Python-based chatbot that helps customers with chocolate store queries using b
 - Error handling and logging
 - Interactive command-line interface
 
-## Setup
+## 🚀 Setup
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/chocolate-store-chatbot.git
-cd chocolate-store-chatbot
+git clone https://github.com/NehaPingle642/Chatbot_Project.git
+cd Chatbot_Project
 ```
 
 2. Install dependencies:
@@ -28,7 +28,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 Chatbot_Project/
@@ -43,7 +43,7 @@ Chatbot_Project/
 └── README.md
 ```
 
-## Usage
+## 💬 Usage
 
 - Start the chatbot and type your questions
 - Get instant responses about chocolate customization, delivery, etc.
@@ -61,10 +61,10 @@ Chatbot_Project/
 📧 [nehacpingle@gmail.com](mailto:nehacpingle@gmail.com)  
 🔗 [LinkedIn](http://www.linkedin.com/in/neha-pingle-p6421969)
 
-## 🧠 Future Scope
+## 🔮 Future Scope
 
 - Integrate with Telegram or WhatsApp
-- Add voice input
-- Admin panel to manage FAQs
+- Add voice input support
+- Admin panel for FAQ management
 
 
