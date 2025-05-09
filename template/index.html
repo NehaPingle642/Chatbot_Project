@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FAQ Bot</title>
+    </head>
+    <body>
+        <h1>Ask me something</h1>
+        <form id="faqForm">
+            <input type="text" id="userMessage" placeholder="Type a question..." required>
+            <button type="submit">Ask</button>
+        </form>
+        
+        <div id="response"></div>
+    
+        <script>
+            document.getElementById('faqForm').addEventListener('submit', function(event) {
+                event.preventDefault();  // Prevent the form from submitting normally
+                const userMessage = document.getElementById('userMessage').value;  // Get user input
+    
+                fetch('http://localhost:3000/get', {  // Ensure the correct endpoint (e.g., http://localhost:3000/get)
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: userMessage })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();  // Parse the JSON response
+                })
+                .then(data => {
+                    document.getElementById('response').innerText = data.response;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    document.getElementById('response').innerText = "Sorry, there was an error processing your request.";
+                });
+            });
+        </script>
+    </body>
+</html>
