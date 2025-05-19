@@ -1,78 +1,41 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 import json
-import pickle
 import os
-import logging
 
-# Setup logging for better traceability
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+class Chatbot:
+    def __init__(self):
+        # Initialize TF-IDF vectorizer
+        self.vectorizer = TfidfVectorizer()
+        # Load FAQ data from JSON file
+        self.faq_data = self.load_faq()
+        # Prepare question-answer pairs
+        self.questions = [qa['question'] for qa in self.faq_data]
+        self.answers = [qa['answer'] for qa in self.faq_data]
+        # Create TF-IDF matrix for questions
+        self.question_vectors = self.vectorizer.fit_transform(self.questions)
 
-logger = logging.getLogger(__name__)
-
-def load_model():
-    try:
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        model_path = os.path.join(BASE_DIR, 'models', 'chatbot_model.pkl')
-        
-        with open(model_path, 'rb') as f:
-            model, vectorizer, answers = pickle.load(f)
-        return model, vectorizer, answers
-    except Exception as e:
-        logger.error(f"Error loading model: {e}")
-        return None, None, None
-
-def load_faq_data():
-    try:
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        faq_path = os.path.join(BASE_DIR, 'chatbot', 'data', 'faq.json')
-        
-        logger.info(f"Loading FAQ data from: {faq_path}")
-        
-        with open(faq_path, "r", encoding='utf-8-sig') as f:
+    def load_faq(self):
+        # Get path to FAQ JSON file
+        faq_path = os.path.join(os.path.dirname(__file__), 'data', 'faq.json')
+        # Load and parse JSON data
+        with open(faq_path, 'r', encoding='utf-8-sig') as f:
             data = json.load(f)
-            return data["faq"] if "faq" in data else None
-    except FileNotFoundError as e:
-        logger.error(f"Error loading FAQ data: {str(e)}")
-        return None
-    except Exception as e:
-        logger.error(f"Unexpected error loading FAQ data: {str(e)}")
-        return None
+        return data['faq']
 
-# Load the questions and answers from JSON file
-faq_data = load_faq_data()
-if faq_data is None:
-    logging.error("Failed to load FAQ data. Please ensure the data file exists.")
-    exit(1)
-
-# Extract questions and answers from the loaded data
-questions = [item["question"] for item in faq_data]
-answers = [item["answer"] for item in faq_data]
-
-# Global FAQ data caching
-def get_response(user_input):
-    model, vectorizer, answers = load_model()
-    
-    if not all([model, vectorizer, answers]):
-        return "Sorry, I'm not able to respond right now."
-    
-    try:
-        # Transform user input
-        user_vector = vectorizer.transform([user_input])
-        
-        # Get prediction
-        prediction = model.predict(user_vector)[0]
-        
+    def get_response(self, user_input):
+        # Vectorize user input
+        input_vector = self.vectorizer.transform([user_input])
+        # Calculate similarity scores
+        similarities = cosine_similarity(input_vector, self.question_vectors)
+        # Find most similar question
+        best_match = similarities.argmax()
         # Return corresponding answer
-        return answers[prediction]
-    except Exception as e:
-        logger.error(f"Error generating response: {e}")
-        return "I'm sorry, I couldn't understand that."
+        return self.answers[best_match]
 
-# Test output
-if __name__ == "__main__":
-    logging.info("Chatbot ML Response Mode 🔮")
-    while True:
-        user_input = input("You: ")
-        if user_input.lower() == "exit":
-            logging.info("Chatbot: Bye bye Chill Buddy! See you soon!")
-            break
-        print("Chatbot:", get_response(user_input))
+# Create a global instance
+chatbot = Chatbot()
+
+# Export the get_response function
+def get_response(user_input):
+    return chatbot.get_response(user_input)
