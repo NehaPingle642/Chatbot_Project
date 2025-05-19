@@ -1,6 +1,7 @@
 # Python
 __pycache__/
 *.py[cod]
+<<<<<<< HEAD
 *.so
 env/
 venv/
@@ -13,9 +14,42 @@ db.sqlite3
 
 # VS Code
 .vscode/
+=======
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+>>>>>>> c23e7384adefa228712c987f380d6485e2e10961
 
 # Model files
 models/*.pkl
 
+<<<<<<< HEAD
 # Other
 .DS_Store
+=======
+# Logs
+*.log
+>>>>>>> c23e7384adefa228712c987f380d6485e2e10961
