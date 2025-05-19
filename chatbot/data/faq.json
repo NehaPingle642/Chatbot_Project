@@ -1,0 +1,24 @@
+﻿{
+  "faq": [
+    {
+      "question": "Hello",
+      "answer": "Hi, how can I help you?"
+    },
+    {
+      "question": "What can you do?",
+      "answer": "I can answer questions about our chocolate products and services."
+    },
+    {
+      "question": "Can I customize chocolates?",
+      "answer": "Yes, we offer full customization including names, messages, and photos."
+    },
+    {
+      "question": "What is the delivery time?",
+      "answer": "We typically deliver within 3-5 business days."
+    },
+    {
+      "question": "Are your chocolates vegetarian?",
+      "answer": "Yes, all our chocolates are 100% vegetarian."
+    }
+  ]
+}

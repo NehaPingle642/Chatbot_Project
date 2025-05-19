@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI Chatbot</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Inter', sans-serif;
+            }
+
+            body {
+                background-color: #f5f7fb;
+                color: #333;
+                line-height: 1.6;
+            }
+
+            .chat-container {
+                max-width: 800px;
+                margin: 40px auto;
+                padding: 20px;
+            }
+
+            .header {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .header h1 {
+                color: #2c3e50;
+                font-size: 2em;
+                margin-bottom: 10px;
+            }
+
+            .chat-box {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+                min-height: 400px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                overflow-y: auto;
+                max-height: 500px;
+            }
+
+            .message {
+                margin-bottom: 15px;
+                opacity: 0;
+                transform: translateY(20px);
+                animation: fadeIn 0.3s forwards;
+            }
+
+            @keyframes fadeIn {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .user-message {
+                background: #007bff;
+                color: white;
+                padding: 10px 15px;
+                border-radius: 20px;
+                margin-left: auto;
+                max-width: 70%;
+                width: fit-content;
+            }
+
+            .bot-message {
+                background: #e9ecef;
+                color: #2c3e50;
+                padding: 10px 15px;
+                border-radius: 20px;
+                margin-right: auto;
+                max-width: 70%;
+                width: fit-content;
+            }
+
+            #chatForm {
+                display: flex;
+                gap: 10px;
+                background: white;
+                padding: 15px;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            #userMessage {
+                flex: 1;
+                padding: 12px;
+                border: 2px solid #e9ecef;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: border-color 0.3s;
+            }
+
+            #userMessage:focus {
+                outline: none;
+                border-color: #007bff;
+            }
+
+            button {
+                background: #007bff;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 500;
+                transition: background-color 0.3s;
+            }
+
+            button:hover {
+                background: #0056b3;
+            }
+
+            .typing-indicator {
+                display: none;
+                padding: 10px 15px;
+                background: #e9ecef;
+                border-radius: 20px;
+                width: fit-content;
+                margin-bottom: 15px;
+            }
+
+            .typing-indicator span {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                background: #666;
+                border-radius: 50%;
+                margin-right: 5px;
+                animation: typing 1s infinite;
+            }
+
+            @keyframes typing {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-5px); }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="chat-container">
+            <div class="header">
+                <h1>AI Assistant</h1>
+                <p>Ask me anything about our products and services</p>
+            </div>
+            <div class="chat-box" id="chatBox">
+                <div class="message bot-message">Hi! How can I help you today?</div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <span></span>
+                    <span style="animation-delay: 0.2s"></span>
+                    <span style="animation-delay: 0.4s"></span>
+                </div>
+            </div>
+            <form id="chatForm">
+                <input type="text" id="userMessage" placeholder="Type your message..." required>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+
+        <script>
+            const chatBox = document.getElementById('chatBox');
+            const typingIndicator = document.getElementById('typingIndicator');
+
+            document.getElementById('chatForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const userMessage = document.getElementById('userMessage').value;
+                
+                // Add user message to chat
+                const userDiv = document.createElement('div');
+                userDiv.className = 'message user-message';
+                userDiv.textContent = userMessage;
+                chatBox.appendChild(userDiv);
+                
+                // Show typing indicator
+                typingIndicator.style.display = 'block';
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+                fetch('', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({message: userMessage})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide typing indicator
+                    typingIndicator.style.display = 'none';
+                    
+                    // Add bot response
+                    const botDiv = document.createElement('div');
+                    botDiv.className = 'message bot-message';
+                    botDiv.textContent = data.response;
+                    chatBox.appendChild(botDiv);
+                    
+                    // Clear input and scroll to bottom
+                    document.getElementById('userMessage').value = '';
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    typingIndicator.style.display = 'none';
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'message bot-message';
+                    errorDiv.textContent = 'Sorry, something went wrong.';
+                    chatBox.appendChild(errorDiv);
+                });
+            });
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        </script>
+    </body>
+</html>

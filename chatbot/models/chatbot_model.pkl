@@ -1,0 +1,33 @@
+import json
+import pickle
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+import os
+
+# Create models directory if it doesn't exist
+os.makedirs('models', exist_ok=True)
+
+# Load FAQ data
+with open('faq.json', 'r', encoding='utf-8') as f:
+    faq_data = json.load(f)
+
+# Prepare training data
+questions = []
+answers = []
+for item in faq_data:
+    questions.append(item['question'])
+    answers.append(item['answer'])
+
+# Create and train the model
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(questions)
+y = range(len(questions))  # Each question gets its own class
+
+model = MultinomialNB()
+model.fit(X, y)
+
+# Save the model and vectorizer
+with open('models/chatbot_model.pkl', 'wb') as f:
+    pickle.dump((model, vectorizer, answers), f)
+
+print("Model trained and saved successfully!")
